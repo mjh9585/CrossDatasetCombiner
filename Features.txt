@@ -1,0 +1,162 @@
+masterFeatures = {
+    #name: column number
+    "ID":1,
+    "Src IP":2,
+    "Src Port":3,
+    "Dst IP":4,
+    "Dst Port":5,
+    "Protocol":6,
+    "Timestamp":7,
+    "Flow Duration":8,
+    "Packet Length Min":9,
+    "Packet Length Max":10,
+    "Packet Length Mean":11,
+    "Packet Length Std":12,
+    "Packet Length Variance":13,
+    "Fwd Packet Length Min":14,
+    "Fwd Packet Length Max":15,
+    "Fwd Packet Length Mean":16,
+    "Fwd Packet Length Std":17,
+    "Bwd Packet Length Min":18,
+    "Bwd Packet Length Max":19,
+    "Bwd Packet Length Mean":20,
+    "Bwd Packet Length Std":21,
+    "Flow Byte/s":22,
+    "Fwd Flow Byte/s":23,
+    "Bwd Flow Byte/s":24,
+    "Flow Packets/s":25,
+    "Fwd Flow Packets/s":26,
+    "Bwd Flow Packets/s":27,
+    "Total Length of Packets":28,
+    "Total Length of Fwd Packets":29,
+    "Total Length of Bwd Packets":30,
+    "Total Packets": 31,
+    "Total Fwd Packets":32,
+    "Total Bwd packets":33,
+    "Flow IAT Mean":34,
+    "Flow IAT Std":35,
+    "Flow IAT Max":36,
+    "Flow IAT Min":37,
+    "Fwd IAT Min":38,
+    "Fwd IAT Max":39,
+    "Fwd IAT Mean":40,
+    "Fwd IAT Std":41,
+    "Fwd IAT Total":42,
+    "Bwd IAT Min":43,
+    "Bwd IAT Max":44,
+    "Bwd IAT Mean":45,
+    "Bwd IAT Std":46,
+    "Bwd IAT Total":47,
+    "Down/Up Ratio":48,
+    "Label":49,
+}
+
+CIC2017Map = {
+    "Flow ID":"ID",
+    "Src IP":"Src IP",
+    "Src Port":"Src Port",
+    "Dst IP":"Dst IP",
+    "Dst Port":"Dst Port",
+    "Protocol":"Protocol",
+    "Timestamp":"Timestamp",
+    "Flow Duration":"Flow duration",
+
+    "Total Fwd Packets":
+    "Total Backward Packets":
+    "Total Length of Fwd Packets":
+    "Total Length of Bwd Packets":
+    "Fwd Packet Length Max":
+    "Fwd Packet Length Min":
+    "Fwd Packet Length Mean":
+    "Fwd Packet Length Std":
+    "Bwd Packet Length Max":
+    "Bwd Packet Length Min":
+    "Bwd Packet Length Mean":
+    "Bwd Packet Length Std":
+    "Flow Bytes/s":
+    "Flow Packets/s":
+    "Flow IAT Mean":
+    "Flow IAT Std":
+    "Flow IAT Max":
+    "Flow IAT Min":
+    "Fwd IAT Total":
+    "Fwd IAT Mean":
+    "Fwd IAT Std":
+    "Fwd IAT Max":
+    "Fwd IAT Min":
+    "Bwd IAT Total":
+    "Bwd IAT Mean":
+    "Bwd IAT Std":
+    "Bwd IAT Max":
+    "Bwd IAT Min":
+    
+    "Fwd Header Length":
+    "Bwd Header Length":
+    "Fwd Packets/s":
+    "Bwd Packets/s":
+    "Min Packet Length":
+    "Max Packet Length":
+    "Packet Length Mean":
+    "Packet Length Std":
+    "Packet Length Variance":
+
+    "Down/Up Ratio":
+    "Average Packet Size":
+
+}
+
+USBIDS_MAP = {
+    #dataset name: master name
+    "Flow ID":"ID",
+    "Src IP":"Src IP",
+    "Src Port":"Src Port",
+    "Dst IP":"Dst IP",
+    "Dst Port":"Dst Port",
+    "Protocol":"Protocol",
+    "Timestamp":"Timestamp",
+    "Flow Duration":"Flow Duration",
+    "Total Fwd Packet":"Total Fwd Packet",
+    "Total Bwd Packets":"Total Bwd packets",
+    "Total Length of Bwd Packet":"Total Length of Bwd Packets",
+    "Total Length of Fwd Packet":"Total Length of Fwd Packets",
+    "Fwd Packet Length Max": "Fwd Packet Length Max",
+    "Fwd Packet Length Min": "Fwd Packet Length Min",
+    "Fwd Packet Length Mean": "Fwd Packet Length Mean",
+    "Fwd Packet Length Std": "Fwd Packet Length Std",
+    "Bwd Packet Length Max": "Bwd Packet Length Max",
+    "Bwd Packet Length Min": "Bwd Packet Length Min",
+    "Bwd Packet Length Mean": "Bwd Packet Length Mean",
+    "Bwd Packet Length Std": "Bwd Packet Length Std",
+    "Flow Bytes/s":"Flow Byte/s",
+    "Flow Packets/s":"Flow Packets/s",
+    "Flow IAT Mean": "Flow IAT Mean",
+    "Flow IAT Std": "Flow IAT Std",
+    "Flow IAT Max": "Flow IAT Max",
+    "Flow IAT Min": "Flow IAT Min",
+    "Fwd IAT Total":"Fwd IAT Total",
+    "Fwd IAT Mean":"Fwd IAT Mean",
+    "Fwd IAT Std":"Fwd IAT Std",
+    "Fwd IAT Max":"Fwd IAT Max",
+    "Fwd IAT Min":"Fwd IAT Min",
+    "Bwd IAT Total":"Bwd IAT Total",
+    "Bwd IAT Mean":"Bwd IAT Mean",
+    "Bwd IAT Std":"Bwd IAT Std",
+    "Bwd IAT Max":"Bwd IAT Max",
+    "Bwd IAT Min":"Bwd IAT Min",
+    "Fwd Packets/s":"Fwd Flow Packets/s",
+    "Bwd Packets/s":"Bwd Flow Packets/s",
+    "Packet Length Min": "Packet Length Min",
+    "Packet Length Max": "Packet Length Max",
+    "Packet Length Mean": "Packet Length Mean",
+    "Packet Length Std": "Packet Length Std",
+    "Packet Length Variance": "Packet Length Variance",
+    "Down/Up Ratio":"Down/Up Ratio",
+    "Label":"Label"
+}
+
+USBIDS_CALCULABLE = [
+    "Fwd Flow Byte/s",
+    "Bwd Flow Byte/s",
+    "Total Length of Packets",
+    "Total Packets"
+]
