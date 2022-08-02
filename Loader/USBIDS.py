@@ -1,6 +1,6 @@
 from util.FeatureCalculation import featureBytesPerSecBwd, featureBytesPerSecFwd, featureTotalLenPkts, featureTotalPkts
 from Loader.Dataset import Dataset
-from util.UnitConversion import BytePSec, Bytes, DateString, Generic, Microseconds
+from util.UnitConversion import BytesPSec, Bytes, DateString, Generic, Microseconds
 
 class USBIDS2021(Dataset):
     FEATURE_MAP = {
@@ -24,8 +24,8 @@ class USBIDS2021(Dataset):
         "Bwd Packet Length Min": ("Bwd Packet Length Min",Bytes),
         "Bwd Packet Length Mean": ("Bwd Packet Length Mean",Bytes),
         "Bwd Packet Length Std": ("Bwd Packet Length Std",Bytes),
-        "Flow Bytes/s": ("Flow Byte/s",BytePSec),
-        "Flow Packets/s": ("Flow Packets/s",BytePSec),
+        "Flow Bytes/s": ("Flow Bytes/s",BytesPSec),
+        "Flow Packets/s": ("Flow Packets/s",BytesPSec),
         "Flow IAT Mean": ("Flow IAT Mean",Microseconds),
         "Flow IAT Std": ("Flow IAT Std",Microseconds),
         "Flow IAT Max": ("Flow IAT Max",Microseconds),
@@ -50,12 +50,12 @@ class USBIDS2021(Dataset):
         "Down/Up Ratio": ("Down/Up Ratio",Generic),
         "Label": ("Label",Generic)
     }
-    CALCULABLE_FEATURES = {
-        "Fwd Flow Byte/s": featureBytesPerSecFwd,
-        "Bwd Flow Byte/s": featureBytesPerSecBwd,
-        "Total Length of Packets": featureTotalLenPkts,
-        "Total Packets": featureTotalPkts
-    }
+    CALCULABLE_FEATURES = [
+        ("Fwd Flow Byte/s", featureBytesPerSecFwd),
+        ("Bwd Flow Byte/s", featureBytesPerSecBwd),
+        ("Total Length of Packets", featureTotalLenPkts),
+        ("Total Packets", featureTotalPkts)
+    ]
 
-    def __init__(self, filepath, note, calculateFeatures=True):
-        super().__init__(filepath, note, calculateFeatures)
+    def __init__(self, filepath, name, calculateFeatures=True):
+        super().__init__(filepath, name, calculateFeatures)

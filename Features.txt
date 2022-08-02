@@ -21,7 +21,7 @@ masterFeatures = {
     "Bwd Packet Length Max":19,
     "Bwd Packet Length Mean":20,
     "Bwd Packet Length Std":21,
-    "Flow Byte/s":22,
+    "Flow Bytes/s":22,
     "Fwd Flow Byte/s":23,
     "Bwd Flow Byte/s":24,
     "Flow Packets/s":25,
@@ -32,7 +32,7 @@ masterFeatures = {
     "Total Length of Bwd Packets":30,
     "Total Packets": 31,
     "Total Fwd Packets":32,
-    "Total Bwd packets":33,
+    "Total Bwd Packets":33,
     "Flow IAT Mean":34,
     "Flow IAT Std":35,
     "Flow IAT Max":36,
@@ -160,3 +160,56 @@ USBIDS_CALCULABLE = [
     "Total Length of Packets",
     "Total Packets"
 ]
+
+
+"ID"
+
+"Packet Length Mean"
+
+"Flow Byte/s"
+
+"Flow Packets/s"
+"Fwd Flow Packets/s"
+"Bwd Flow Packets/s"
+"Total Length of Packets"
+
+"Total Packets"
+
+"Flow IAT Mean"
+
+"Down/Up Ratio"
+
+
+UNSWNB15_MAP = {
+    "srcip": ("Src IP",Generic),
+    "sport": ("Src Port",Generic),
+    "dstip": ("Dst IP",Generic),
+    "dsport": ("Dst Port",Generic),
+    "proto": ("Protocol",ProtocolStr),
+    "dur": ("Flow Duration",Seconds),
+    "sbytes": ("Total Length of Fwd Packets",Bytes),
+    "dbytes": ("Total Length of Bwd Packets",Bytes),
+    "Sload": ("Fwd Flow Byte/s",BitsPSec),
+    "Dload": ("Bwd Flow Byte/s",BitsPSec),
+    "Spkts": ("Total Fwd Packets",Generic),
+    "Dpkts": ("Total Bwd packets",Generic),
+    "smeansz": ("Fwd Packet Length Mean",Bytes),
+    "dmeansz": ("Bwd Packet Length Mean",Bytes),
+    "Stime": ("Timestamp",UnixTime),
+    "Sintpkt": ("Fwd IAT Mean",Milliseconds),
+    "Dintpkt": ("Bwd IAT Mean",Milliseconds),
+    "attack_cat": ("Label",Generic),
+}
+
+UNSWNB15_Calculable = {
+    "ID": ,
+    "Packet Length Mean": ,
+    "Flow Byte/s": ,
+    "Flow Packets/s": ,
+    "Fwd Flow Packets/s": ,
+    "Bwd Flow Packets/s": ,
+    "Total Length of Packets": ,
+    "Total Packets": ,
+    "Flow IAT Mean": ,
+    "Down/Up Ratio": ,
+}
