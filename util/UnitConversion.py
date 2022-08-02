@@ -9,6 +9,12 @@ class Unit(ABC):
     def convert(val):
         pass
 
+class Generic(Unit):
+    @staticmethod
+    def convert(val):
+        return val
+
+## Time
 class Seconds(Unit):
     @staticmethod
     def convert(val):
@@ -19,21 +25,28 @@ class Microseconds(Unit):
     def convert(val):
         return val/1000000.0
 
-class Generic(Unit):
+class Milliseconds(Unit):
     @staticmethod
     def convert(val):
-        return val
+        return val/1000.0
 
+## Data Size
 class Bytes(Unit):
     @staticmethod
     def convert(val):
         return val
 
-class BytePSec(Unit):
+## Data rate
+class BytesPSec(Unit):
     @staticmethod
     def convert(val):
         return val
+class BitsPSec(Unit):
+    @staticmethod
+    def convert(val):
+        return val/8
 
+## Date
 class DateString(Unit):
     @staticmethod
     def convert(val):
@@ -43,6 +56,16 @@ class DateString(Unit):
         return time.mktime(parse(val).timetuple())
         
 class UnixTime(Unit):
+    @staticmethod
+    def convert(val):
+        return val
+
+#Protocol
+class ProtocolStr(Unit):
+    # TODO Map protocol strings to Decimal Number!
+    PROTOCOL_MAP = {
+
+    }
     @staticmethod
     def convert(val):
         return val
