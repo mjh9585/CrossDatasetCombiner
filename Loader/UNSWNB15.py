@@ -4,24 +4,24 @@ from util.UnitConversion import BitsPSec, Bytes, Generic, Milliseconds, Protocol
 
 class UNSWNB15(Dataset):
     FEATURE_MAP = {
-        "srcip": ("Src IP",Generic),
-        "sport": ("Src Port",Generic),
-        "dstip": ("Dst IP",Generic),
-        "dsport": ("Dst Port",Generic),
+        "srcip": ("Src IP",None),
+        "sport": ("Src Port",None),
+        "dstip": ("Dst IP",None),
+        "dsport": ("Dst Port",None),
         "proto": ("Protocol",ProtocolStr),
-        "dur": ("Flow Duration",Seconds),
-        "sbytes": ("Total Length of Fwd Packets",Bytes),
-        "dbytes": ("Total Length of Bwd Packets",Bytes),
+        "dur": ("Flow Duration",None),
+        "sbytes": ("Total Length of Fwd Packets",None),
+        "dbytes": ("Total Length of Bwd Packets",None),
         "Sload": ("Fwd Flow Byte/s",BitsPSec),
         "Dload": ("Bwd Flow Byte/s",BitsPSec),
-        "Spkts": ("Total Fwd Packets",Generic),
-        "Dpkts": ("Total Bwd Packets",Generic),
-        "smeansz": ("Fwd Packet Length Mean",Bytes),
-        "dmeansz": ("Bwd Packet Length Mean",Bytes),
-        "Stime": ("Timestamp",UnixTime),
+        "Spkts": ("Total Fwd Packets",None),
+        "Dpkts": ("Total Bwd Packets",None),
+        "smeansz": ("Fwd Packet Length Mean",None),
+        "dmeansz": ("Bwd Packet Length Mean",None),
+        "Stime": ("Timestamp",None),
         "Sintpkt": ("Fwd IAT Mean",Milliseconds),
         "Dintpkt": ("Bwd IAT Mean",Milliseconds),
-        "attack_cat": ("Label",Generic),
+        "attack_cat": ("Label",None),
     }
 
     CALCULABLE_FEATURES = [
@@ -49,14 +49,12 @@ class UNSWNB15(Dataset):
 
     def __init__(self, filepath, name, calculateFeatures=True):
         super().__init__(filepath, name, calculateFeatures, header=None, names=self.ORIGINAL_FEATURES)
-        self.addPreprocessor(self.replaceBadValues)
-
+        self.preProcess["preCalc"].append(self.replaceBadValues)
+        
+        #self.addPreprocessor(self.replaceBadValues)
+    
     def replaceBadValues(self, df):
         df["Label"] = df["Label"].fillna("BENIGN")
         df.loc[df["Flow Duration"] == 0, "Flow Duration"] = 0.0000001
 
-        if(self.doFeatureCalc):
-            for feature,funct in self.CALCULABLE_FEATURES:
-                df[feature] = funct(df)
-        
         return df

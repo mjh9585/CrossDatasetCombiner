@@ -30,7 +30,8 @@ def featureTotalPkts(df):
 
 ### ID
 def featureID(df):
-    return df.apply(lambda row: f'{row["Src IP"]}-{row["Dst IP"]}-{row["Src Port"]}-{row["Dst Port"]}', axis=1)
+    #return df.apply(lambda row: f'{row["Src IP"]}-{row["Dst IP"]}-{row["Src Port"]}-{row["Dst Port"]}', axis=1)
+    return [f'{sI}-{dI}-{sP}-{dP}' for sI,dI,sP,dP in zip(df["Src IP"],df["Dst IP"],df["Src Port"],df["Dst Port"])]
 
 ### Mean
 def featurePktLenMean(df):

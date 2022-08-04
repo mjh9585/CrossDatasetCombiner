@@ -1,29 +1,40 @@
 from util.FeatureCalculation import featureBytesPerSecBwd, featureBytesPerSecFwd, featureTotalLenPkts, featureTotalPkts
 from Loader.Dataset import Dataset
-from util.UnitConversion import BytesPSec, Bytes, DateString, Generic, Microseconds
+from util.UnitConversion import BytesPSec, Bytes, DateString, Generic, Microseconds, Unit
+from pandas import Series
+import time
+from datetime import datetime
+
+class USBDateString(Unit):
+    @staticmethod
+    def convert(val):
+        if(type(val) is Series):
+            return val.apply(lambda t: time.mktime(datetime.strptime(t,"%m/%d/%Y %I:%M:%S %p").timetuple()))
+            
+        return time.mktime(datetime.strptime(val,"%m/%d/%Y %I:%M:%S %p").timetuple())
 
 class USBIDS2021(Dataset):
     FEATURE_MAP = {
-        "Flow ID":("ID",Generic),
-        "Src IP": ("Src IP",Generic),
-        "Src Port": ("Src Port",Generic),
-        "Dst IP": ("Dst IP",Generic),
-        "Dst Port": ("Dst Port",Generic),
-        "Protocol": ("Protocol",Generic),
-        "Timestamp": ("Timestamp",DateString),
+        "Flow ID":("ID",None),
+        "Src IP": ("Src IP",None),
+        "Src Port": ("Src Port",None),
+        "Dst IP": ("Dst IP",None),
+        "Dst Port": ("Dst Port",None),
+        "Protocol": ("Protocol",None),
+        "Timestamp": ("Timestamp",USBDateString),
         "Flow Duration": ("Flow Duration",Microseconds),
-        "Total Fwd Packet": ("Total Fwd Packets",Generic),
-        "Total Bwd packets": ("Total Bwd Packets",Generic),
-        "Total Length of Bwd Packet": ("Total Length of Bwd Packets",Bytes),
-        "Total Length of Fwd Packet": ("Total Length of Fwd Packets",Bytes),
-        "Fwd Packet Length Max": ("Fwd Packet Length Max",Bytes),
-        "Fwd Packet Length Min": ("Fwd Packet Length Min",Bytes),
-        "Fwd Packet Length Mean": ("Fwd Packet Length Mean",Bytes),
-        "Fwd Packet Length Std": ("Fwd Packet Length Std",Bytes),
-        "Bwd Packet Length Max": ("Bwd Packet Length Max",Bytes),
-        "Bwd Packet Length Min": ("Bwd Packet Length Min",Bytes),
-        "Bwd Packet Length Mean": ("Bwd Packet Length Mean",Bytes),
-        "Bwd Packet Length Std": ("Bwd Packet Length Std",Bytes),
+        "Total Fwd Packet": ("Total Fwd Packets",None),
+        "Total Bwd packets": ("Total Bwd Packets",None),
+        "Total Length of Bwd Packet": ("Total Length of Bwd Packets",None),
+        "Total Length of Fwd Packet": ("Total Length of Fwd Packets",None),
+        "Fwd Packet Length Max": ("Fwd Packet Length Max",None),
+        "Fwd Packet Length Min": ("Fwd Packet Length Min",None),
+        "Fwd Packet Length Mean": ("Fwd Packet Length Mean",None),
+        "Fwd Packet Length Std": ("Fwd Packet Length Std",None),
+        "Bwd Packet Length Max": ("Bwd Packet Length Max",None),
+        "Bwd Packet Length Min": ("Bwd Packet Length Min",None),
+        "Bwd Packet Length Mean": ("Bwd Packet Length Mean",None),
+        "Bwd Packet Length Std": ("Bwd Packet Length Std",None),
         "Flow Bytes/s": ("Flow Bytes/s",BytesPSec),
         "Flow Packets/s": ("Flow Packets/s",BytesPSec),
         "Flow IAT Mean": ("Flow IAT Mean",Microseconds),
@@ -40,15 +51,15 @@ class USBIDS2021(Dataset):
         "Bwd IAT Std": ("Bwd IAT Std",Microseconds),
         "Bwd IAT Max": ("Bwd IAT Max",Microseconds),
         "Bwd IAT Min": ("Bwd IAT Min",Microseconds),
-        "Fwd Packets/s": ("Fwd Flow Packets/s",Generic),
-        "Bwd Packets/s": ("Bwd Flow Packets/s",Generic),
-        "Packet Length Min": ("Packet Length Min",Bytes),
-        "Packet Length Max": ("Packet Length Max",Bytes),
-        "Packet Length Mean": ("Packet Length Mean",Bytes),
-        "Packet Length Std": ("Packet Length Std",Bytes),
-        "Packet Length Variance": ("Packet Length Variance",Bytes),
-        "Down/Up Ratio": ("Down/Up Ratio",Generic),
-        "Label": ("Label",Generic)
+        "Fwd Packets/s": ("Fwd Flow Packets/s",None),
+        "Bwd Packets/s": ("Bwd Flow Packets/s",None),
+        "Packet Length Min": ("Packet Length Min",None),
+        "Packet Length Max": ("Packet Length Max",None),
+        "Packet Length Mean": ("Packet Length Mean",None),
+        "Packet Length Std": ("Packet Length Std",None),
+        "Packet Length Variance": ("Packet Length Variance",None),
+        "Down/Up Ratio": ("Down/Up Ratio",None),
+        "Label": ("Label",None)
     }
     CALCULABLE_FEATURES = [
         ("Fwd Flow Byte/s", featureBytesPerSecFwd),
@@ -59,3 +70,5 @@ class USBIDS2021(Dataset):
 
     def __init__(self, filepath, name, calculateFeatures=True):
         super().__init__(filepath, name, calculateFeatures)
+
+
