@@ -100,6 +100,7 @@ masterFeatures = [
     "Bwd IAT Total", #47
     "Down/Up Ratio", #48
     "Label", #49
+    "Dataset", #50
 ]
 
 def findCommonFeatures(*args):

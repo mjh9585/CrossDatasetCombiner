@@ -1,11 +1,12 @@
 
-from abc import ABC
+from abc import ABC, abstractmethod
 from dateutil.parser import parse
 from pandas import Series
 import time
 
 class Unit(ABC):
     @staticmethod
+    @abstractmethod
     def convert(val):
         pass
 
@@ -64,7 +65,9 @@ class UnixTime(Unit):
 class ProtocolStr(Unit):
     # TODO Map protocol strings to Decimal Number!
     PROTOCOL_MAP = {
-
+        'tcp':6, 
+        'udp':17, 
+        'hopopt':0
     }
     @staticmethod
     def convert(val):

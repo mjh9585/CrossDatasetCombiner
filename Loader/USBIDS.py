@@ -1,14 +1,14 @@
 from util.FeatureCalculation import featureBytesPerSecBwd, featureBytesPerSecFwd, featureTotalLenPkts, featureTotalPkts
 from Loader.Dataset import Dataset
 from util.UnitConversion import BytesPSec, Bytes, DateString, Generic, Microseconds, Unit
-from pandas import Series
+import pandas as pd
 import time
 from datetime import datetime
 
 class USBDateString(Unit):
     @staticmethod
     def convert(val):
-        if(type(val) is Series):
+        if(type(val) is pd.Series):
             return val.apply(lambda t: time.mktime(datetime.strptime(t,"%m/%d/%Y %I:%M:%S %p").timetuple()))
             
         return time.mktime(datetime.strptime(val,"%m/%d/%Y %I:%M:%S %p").timetuple())
@@ -70,5 +70,9 @@ class USBIDS2021(Dataset):
 
     def __init__(self, filepath, name, calculateFeatures=True):
         super().__init__(filepath, name, calculateFeatures)
+        self.reset()
+
+    def reset(self):
+        self.reader = pd.read_csv(self.filepath,chunksize=self.chunksize,skipinitialspace=True)
 
 

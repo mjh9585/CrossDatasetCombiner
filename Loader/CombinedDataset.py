@@ -7,39 +7,55 @@ class CombinationMethod(Enum):
     INTERLACE = 2
 
 class CombinedDataset(Dataset):
-    def __init__(self, datasets, features, method,name=None, startTime=None, ):
+    def __init__(self, datasets, features, method, name=None, startTime=None, offsetTime=None):
+        super().__init__(None,name)
         self.datasets = datasets
         self.name = name if name is not None else "Combined"
         self.features = features
         self.features.append("relTime")
+        self.features.append("Dataset")
         self.method = method
 
-        self.datasetTimes = [] #dsStart,dsLast,offset
         self.startTime = startTime
         self.__dsTimeOffset = 0
         self.lastTime = 0
-        self.prePreprocessors = []
 
         self.currentDataset = 0
-        self.chunksize = datasets[0].chunksize
+
+        #build a list of offset times for each dataset
+        if(isinstance(offsetTime, list)):
+            n = len(self.datasets)
+            self.offsetTime = offsetTime[:n] + [0]*(n-len(offsetTime))
+        else:
+            amount = 0 if offsetTime is None else offsetTime
+            self.offsetTime = [amount] * len(self.datasets)
+
+        # d = [
+        #     {"df":df, "index":i, "len":n}
+        # ]
+
     
-    def getFeatures(self):
-        return self.features
+    # def addPreConvertProcessor(self, preprocess):
+    #     '''
+    #     Adds a Preprocessor to each dataset before performing unit conversion and column renaming
+    #     '''
+    #     self.preProcess["preConvert"].append(preprocess)
 
-    def prePreprocessor(self, df):
-        return self.__runAdditionalPreprocess(df)
+    # def addPreCalculateProcessor(self, preprocess):
+    #     '''
+    #     Adds a Preprocessor to each dataset before performing additional feature calculation
+    #     '''
+    #     self.preProcess["preCalc"].append(preprocess)
 
-    def fixTimestamps(self, df, dsStartTime = 0, dsLastTime = 0, dsOffsetTime = 0):
-        df["Timestamp"] = (df["Timestamp"] - dsStartTime) + dsOffsetTime
-        return df
-
-    def combineSequential2(self):
+    def combineSequential(self,nRows):
         print(f'Combining {self.datasets[self.currentDataset].name}')
         frames = []
         count = 0
-        while (count < self.chunksize) and self.currentDataset < len(self.datasets):
+        while (count < nRows) and self.currentDataset < len(self.datasets):
             try:
-                d = self.datasets[self.currentDataset].getChunk(self.chunksize-count)[self.features]
+
+                d = self.datasets[self.currentDataset].getChunk(nRows-count)
+                d = d[d.columns.intersection(self.features)]
             except StopIteration:
                 print(f'Reached end of {self.datasets[self.currentDataset].name} with {count} flows, ',end='')
                 self.currentDataset += 1
@@ -58,9 +74,13 @@ class CombinedDataset(Dataset):
             if(ltime > self.lastTime):
                 self.lastTime = ltime
 
-            d["Timestamp"] = d["relTime"] + self.startTime + self.__dsTimeOffset
-            d["Dataset"] = self.datasets[self.currentDataset].name
-            d = d.drop("relTime", axis=1) # limit dataset to features
+            d["relTime"] = d["relTime"] + self.__dsTimeOffset + self.offsetTime[self.currentDataset]
+            d["Timestamp"] = d["relTime"] + self.startTime
+            
+            if("Dataset" not in d.columns):
+                d["Dataset"] = self.datasets[self.currentDataset].name
+
+            #d = d.drop("relTime", axis=1) # limit dataset to features
             count += len(d)
             frames.append(d)
             
@@ -71,52 +91,21 @@ class CombinedDataset(Dataset):
             raise StopIteration
 
         return df
+    
+    def combineInterlaced(self, nRows):
+        pass
 
-    # TODO Remove
-    # def combineSequential(self):
-    #     print(f'Combining {self.datasets[self.currentDataset].name}')
+    
+    def reset(self):
+        for ds in self.datasets:
+            ds.reset()
 
-    #     # get next chunk
-    #     df = next(self.datasets[self.currentDataset])[self.features]
-
-    #     #test if dataset has timing info
-    #     if(len(self.datasetTimes) == 0):
-    #         stime = df["Timestamp"][0]
-    #         otime = self.startTime if self.startTime is not None else stime
-    #         self.datasetTimes.append([stime,0,otime])
-
-    #     #adjust the timing
-    #     df = self.fixTimestamps(df,*self.datasetTimes[self.currentDataset])
-    #     df["Dataset"] = self.datasets[self.currentDataset].name
-
-    #     #find the largest time stamp for next dataset offset
-    #     ltime = df["Timestamp"].max()
-    #     if(ltime > self.datasetTimes[self.currentDataset][1]):
-    #         self.datasetTimes[self.currentDataset][1] = ltime
-
-    #     #test if full chunk was loaded
-    #     while len(df) < self.chunksize:
-    #         #change to next dataset to load the rest of the chunk
-    #         self.currentDataset += 1
-    #         if(self.currentDataset >= len(self.datasets)):
-    #             break
-            
-    #         print(f'Only {len(df)} flows, combining additional {self.chunksize-len(df)} flows from {self.datasets[self.currentDataset].name}')
-            
-    #         #load remaining chunk
-    #         d = self.datasets[self.currentDataset].getChunk(self.chunksize-len(df))[self.features]
-    #         d["Dataset"] = self.datasets[self.currentDataset].name
-
-    #         #create new time record
-    #         stime = d["Timestamp"][0]
-    #         otime = self.datasetTimes[self.currentDataset-1][1]
-    #         self.datasetTimes.append([stime, 0, otime])
-
-    #         d = self.fixTimestamps(d,*self.datasetTimes[self.currentDataset])
-    #         self.datasetTimes[self.currentDataset][1] = d["Timestamp"].max()
-            
-    #         df = pd.concat([df,d])
-    #     return df
+    def getChunk(self, rows):
+        if(self.currentDataset >= len(self.datasets)):
+            raise StopIteration
+        df = self.combineSequential(rows)
+        df = self.runAdditionalPreprocess(df)
+        return df
 
     def __iter__(self):
         return self
@@ -124,6 +113,6 @@ class CombinedDataset(Dataset):
     def __next__(self):
         if(self.currentDataset >= len(self.datasets)):
             raise StopIteration
-        df = self.combineSequential2()
+        df = self.combineSequential(self.chunksize)
         df = self.runAdditionalPreprocess(df)
         return df

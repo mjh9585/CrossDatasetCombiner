@@ -1,7 +1,7 @@
 from util.FeatureCalculation import featureBytesPerSec, featureIATMean, featureID, featurePktLenMean, featurePktsPerSec, featurePktsPerSecBwd, featurePktsPerSecFwd, featureTotalLenPkts, featureTotalPkts, featureDownUpRatio
 from Loader.Dataset import Dataset
 from util.UnitConversion import BitsPSec, Bytes, Generic, Milliseconds, ProtocolStr, Seconds, UnixTime
-
+import pandas as pd
 class UNSWNB15(Dataset):
     FEATURE_MAP = {
         "srcip": ("Src IP",None),
@@ -48,13 +48,17 @@ class UNSWNB15(Dataset):
     ]
 
     def __init__(self, filepath, name, calculateFeatures=True):
-        super().__init__(filepath, name, calculateFeatures, header=None, names=self.ORIGINAL_FEATURES)
-        self.preProcess["preCalc"].append(self.replaceBadValues)
+        super().__init__(filepath, name, calculateFeatures)
+        self.reset()
+        #self.preProcess["preCalc"].append(self.replaceBadValues)
         
-        #self.addPreprocessor(self.replaceBadValues)
+        self.addPreCalculateProcessor(self.replaceBadValues)
     
     def replaceBadValues(self, df):
         df["Label"] = df["Label"].fillna("BENIGN")
         df.loc[df["Flow Duration"] == 0, "Flow Duration"] = 0.0000001
 
         return df
+
+    def reset(self):
+        self.reader = pd.read_csv(self.filepath,chunksize=self.chunksize,skipinitialspace=True, header=None, names=self.ORIGINAL_FEATURES)
