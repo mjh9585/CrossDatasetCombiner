@@ -44,7 +44,7 @@ class CombinedDataset(Dataset):
             amount = 0 if offsetTime is None else offsetTime
             self.offsetTime = [amount] * len(self.datasets)
 
-        self.interlacedStatus = [{"df":None}] * len(self.datasets)
+        #self.interlacedStatus = [{"df":None}] * len(self.datasets)
         # d = [
         #     {"df":df, "index":i, "len":n}
         # ]
