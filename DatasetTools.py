@@ -1,8 +1,11 @@
 from enum import Enum
+from typing import List, Union
 
-from Loader import USBIDS,CombinedDataset,UNSWNB15
+from Loader import USBIDS,CombinedDataset,UNSWNB15,Dataset
 from Loader.CombinedDataset import CombinationMethod
 
+import os.path
+import os
 class Datasets(Enum):
     CIC_2020 = 1
     CIC_2019 = 2
@@ -37,7 +40,13 @@ def loadDataset(dataset : Datasets, path : str, name:str = None, calcFeatures = 
         print("unrecognized dataset, unable to load!")
         raise ValueError
 
-def combineDatasets(*args, method=CombinationMethod.SEQUENTIAL, startTime=None):
+def combineDatasets(*args, 
+                    method=CombinationMethod.SEQUENTIAL, 
+                    features: List[str] = None,
+                    name=None,
+                    startTime: int = None, 
+                    offsetTime: Union[int,List[int]] = None, 
+                    modifyIPs:bool =True):
     datasets = []
     for d in args:
         if(isinstance(d, list)):
@@ -45,9 +54,16 @@ def combineDatasets(*args, method=CombinationMethod.SEQUENTIAL, startTime=None):
         else:
             datasets.append(d)
 
-    commonFeatures = findCommonFeatures(*datasets)
+    if(features is None):
+        features = findCommonFeatures(*datasets)
 
-    return CombinedDataset.CombinedDataset(datasets,commonFeatures,method,startTime=startTime)
+    print(f"Combined Dataset has {len(features)} features: {features}")
+    for ds in datasets:
+        missing = [v for v in ds.getFeatures() if v not in features]
+        print(f"{ds.name} had {len(ds.getFeatures())} features, missing {len(missing)}")
+    
+    return CombinedDataset.CombinedDataset(datasets,features,method,name=name,startTime=startTime,
+                                            offsetTime=offsetTime,modifyIPs=modifyIPs)
 
 masterFeatures = [
     #name, column number
@@ -133,3 +149,24 @@ def findCommonFeatures(*args):
             sortedFeatures.append(f)
         
     return sortedFeatures
+
+def saveDataset(path:str, dataset:Dataset, features:List[str] = None, overwriteExisting=False):
+    if(features is None):
+        features = dataset.getFeatures()
+    sortedFeatures = [f for f in masterFeatures if f in features]
+    print(f'Saving {dataset.name} with {len(sortedFeatures)} features: {sortedFeatures}')
+    
+    if(os.path.exists(path)):
+        if(overwriteExisting):
+            os.remove(path)
+        else:
+            raise FileExistsError(f'{path} already exists')
+
+    total = 0
+    header = True
+    for df in dataset:
+        total += len(df)
+        df.to_csv(path, header=header, columns=sortedFeatures, index=False, mode='a')
+        header = False
+
+    print(f'Saved {total} flows!')

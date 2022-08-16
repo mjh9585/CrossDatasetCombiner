@@ -6,15 +6,17 @@ class Dataset(ABC):
     FEATURE_MAP = {}
     CALCULABLE_FEATURES = {}
 
-    def __init__(self, filepath, name, calculateFeatures=True):
+    def __init__(self, filepath, name, calculateFeatures=True, modifyIPs=False, chunksize = 10**5):
         self.filepath = filepath
         self.name = name
-        self.chunksize = 10**5
+        self.chunksize = chunksize
         self.reader = None #pd.read_csv(filepath,chunksize=self.chunksize,skipinitialspace=True,**kwargs)
         self.doFeatureCalc = calculateFeatures
+        self.doModifyIPs = modifyIPs
         self.features = []
         self.__renameMap = {}
         self.startTime  = None
+        self.dsNumber = 1
 
         #build the map fo columns that need to be renamed and the list of features in the dataset
         for col in self.FEATURE_MAP:
@@ -101,6 +103,10 @@ class Dataset(ABC):
 
         timecalc = time.time() #! timing test
 
+        if(self.doModifyIPs):
+            df["Src IP"] = [f'{self.dsNumber}.{ip}' for ip in df["Src IP"]]
+            df["Dst IP"] = [f'{self.dsNumber}.{ip}' for ip in df["Dst IP"]]
+
         #calculate relative timestamps
         if(self.startTime is None):
             self.startTime = df["Timestamp"].iloc[0]
@@ -128,6 +134,10 @@ class Dataset(ABC):
     def getFeatures(self):
         return self.features
 
+    def setDatasetNumber(self, num):
+        self.dsNumber = num
+        return num
+
     @abstractmethod
     def reset(self):
         pass
@@ -141,8 +151,4 @@ class Dataset(ABC):
         return self
 
     def __next__(self):
-        timeinit = time.time()
-        df = next(self.reader)
-        #print(f'TIME::Load={(time.time()-timeinit)*1000.0}ms')
-        df = self.prePreprocessor(df)
-        return df
+        return self.getChunk(self.chunksize)
